@@ -1,0 +1,6 @@
+services:
+	- type: web
+	  name: gfs-app
+	  env: python
+	  buildCommand: "pip install -r requiremnts"
+	  startCommand: "gunicorn app:app"
