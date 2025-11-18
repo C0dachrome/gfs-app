@@ -11,6 +11,6 @@ def login():
             # VULNERABLE: Unvalidated redirect to user-provided URL
             return redirect(next_url)
         return redirect('/') # Default redirect
-    return "Login Failed
+    return "Login Failed"
 if __name__ == "__main__":
     app.run()
