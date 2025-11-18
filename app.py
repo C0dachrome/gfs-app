@@ -5,10 +5,10 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "Go to /proxy?url=https://www.example.com to view a proxied site."
+    return "Go to /prxy?url=https://www.example.com to view a proxied site."
 
 # Define the proxy endpoint
-@app.route('/proxy')
+@app.route('/prxy')
 def proxy_external_site():
     target_url = request.args.get('url')
 
