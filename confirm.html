@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirect Warning</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        .warning { color: red; font-weight: bold; }
+        .destination { font-size: 1.2em; margin: 10px 0; padding: 10px; background-color: #f0f0f0; word-break: break-all; }
+    </style>
+</head>
+<body>
+    <h1>Security Warning</h1>
+    <p class="warning">You are about to be redirected to an external website:</p>
+    
+    <div class="destination">{{ next_url }}</div>
+    
+    <p>If you trust this destination, you can proceed:</p>
+
+    <!-- The form submits the destination URL to the new /proceed POST route -->
+    <form action="/proceed" method="POST">
+        <input type="hidden" name="next_url" value="{{ next_url }}">
+        <button type="submit">Proceed to External Site</button>
+        <a href="/">Go Home (Cancel)</a>
+    </form>
+</body>
+</html>
