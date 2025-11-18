@@ -1,25 +1,30 @@
-from flask import Flask, request, redirect, abort
+from flask import Flask, request, redirect, abort, render_template # Import render_template
 
 app = Flask(__name__)
 
-@app.route('/redirect_service', methods=['GET'])
-def redirect_service():
-    # Retrieve the 'next' URL parameter from the query string
-    next_url = request.args.get('next')
-
-    # Basic validation: ensure the URL parameter is present
-    if not next_url:
-        # If 'next' parameter is missing, return a 400 Bad Request error
-        abort(400, description="Missing 'next' URL parameter.")
-    
-    # VULNERABLE: Unvalidated redirect to user-provided URL
-    # This code allows redirection to ANY external website specified in 'next_url'
-    return redirect(next_url)
-
-# A default root page, since the redirect page doesn't have a UI
+# A default root page
 @app.route('/')
 def index():
-    return "Use the /redirect_service?next=URL path to test the redirect functionality."
+    return "Use the /confirm_redirect?next=URL path to test the confirmation functionality."
 
-if __name__ == "__main__":
-    app.run()
+# This new route is where the user lands first.
+@app.route('/confirm_redirect', methods=['GET'])
+def confirm_redirect():
+    next_url = request.args.get('next')
+
+    if not next_url:
+        abort(400, description="Missing 'next' URL parameter.")
+    
+    # Pass the destination URL to the HTML template for display
+    return render_template('confirm.html', next_url=next_url)
+
+# This route handles the actual redirection ONLY after the user clicks 'Proceed'
+@app.route('/proceed', methods=['POST'])
+def proceed_to_redirect():
+    # Get the next_url from the submitted form data (not the URL query params)
+    next_url = request.form.get('next_url')
+
+    if next_url:
+        return redirect(next_url)
+    
+    abort(400, description="Invalid redirect attempt.")
