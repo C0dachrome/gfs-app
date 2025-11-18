@@ -5,7 +5,8 @@ from urllib.parse import urljoin, urlparse
 app = Flask(__name__)
 
 # A general catch-all prxy that tries to pass everything through
-# This route MUST match the URL structure you are using (e.g., /prxy/...)
+# The route is '/prxy/' to match how we construct the usage URL
+@app.route('/prxy/', defaults={'external_path': ''}, methods=['GET', 'POST', 'PUT', 'DELETE'])
 @app.route('/prxy/<path:external_path>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def general_prxy(external_path):
     # Determine the target host from a query parameter
@@ -38,6 +39,7 @@ def general_prxy(external_path):
     # 2. Re-create the response headers, filtering out problematic ones like 'Content-Encoding'
     headers = {}
     for name, value in resp.headers.items():
+        # The .lower() check safely avoids the KeyError we encountered previously
         if name.lower() not in ('content-encoding', 'transfer-encoding'):
             headers[name] = value
 
@@ -52,8 +54,9 @@ def general_prxy(external_path):
 @app.route('/')
 def index():
     # This message explains how to use the prxy
-    return "To use the prxy, construct a URL like this on your site: /prxy/index.html?target_host=http://books.toscrape.com"
+    return "To use the prxy, construct a URL like this on your site: /prxy/?target_host=http://books.toscrape.com"
 
 # The standard Flask entry point (ensure this is present for local testing)
 if __name__ == '__main__':
     app.run(debug=True)
+
